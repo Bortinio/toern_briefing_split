@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Modellvergleich 2026-05-01</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:#333;-webkit-font-smoothing:antialiased}
+.pg{max-width:640px;margin:0 auto;padding:8px}
+
+/* ── Header — 1:1 wie Briefing Builder ── */
+.hdr-table{width:100%;max-width:640px;margin:0 auto;border-collapse:collapse}
+.hdr-cell{background:linear-gradient(135deg,#1B3A5C,#2E75B6);padding:24px 28px;color:#fff;border-radius:10px 10px 0 0}
+.hdr-inner{width:100%;border-collapse:collapse}
+.hdr-inner h1{margin:0;font-size:24px;font-weight:700;letter-spacing:-0.5px}
+.hdr-inner .subtitle{margin:4px 0 0;font-size:14px;opacity:0.85}
+.hdr-inner .date{margin:0;font-size:13px;opacity:0.7}
+.hdr-inner .time{margin:2px 0 0;font-size:11px;opacity:0.5}
+.back-bar{background:#fff;border-left:1px solid #e8ecf0;border-right:1px solid #e8ecf0;padding:8px 28px}
+.back-link{font-size:12px;color:#2E75B6;text-decoration:none}
+.back-link:hover{color:#1B3A5C;text-decoration:underline}
+
+/* ── Tabs ── */
+.tabs{display:flex;background:#fff;border-left:1px solid #e8ecf0;border-right:1px solid #e8ecf0}
+.tab{flex:1;text-align:center;padding:10px 4px;font-size:12px;cursor:pointer;border-bottom:2px solid transparent;color:#888;transition:all .15s;background:none;font-family:inherit}
+.tab.active{color:#1B3A5C;border-bottom-color:#1B3A5C;font-weight:600}
+.tab:hover:not(.active){background:#f8fafc}
+
+/* ── Body ── */
+.bd{background:#fff;border:1px solid #e8ecf0;border-top:none;border-radius:0 0 10px 10px;padding:14px 16px}
+
+/* ── Legende ── */
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;padding:7px 12px;background:#f8fafc;border-radius:6px;font-size:10px;color:#888}
+.li{display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:50%}
+
+/* ── Toggles ── */
+.tgl-row{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
+.tgl{font-size:10px;padding:4px 10px;border-radius:6px;cursor:pointer;border:1px solid #ddd;background:#fff;color:#888;transition:all .15s;font-family:inherit}
+.tgl.on{background:#E6F1FB;color:#0C447C;border-color:#85B7EB}
+
+/* ── Block-Karten ── */
+.bc{margin-bottom:12px;border:1px solid #e8ecf0;border-radius:10px;overflow:hidden}
+.bh{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:#f8fafc;border-bottom:1px solid #e8ecf0}
+.bh h3{font-size:13px;font-weight:600;color:#1B3A5C}
+.bh .sum{font-size:10px;color:#888}
+.bb{padding:10px 14px}
+
+/* ── Parameter-Zeilen ── */
+.pr{margin-bottom:10px}.pr:last-child{margin-bottom:0}
+.pl{font-size:10px;font-weight:600;color:#999;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+
+/* ── Modell-Zeile: Name | Wert | Sparkline | Richtung ── */
+.mr{display:grid;grid-template-columns:72px 46px minmax(0,1fr) 40px;align-items:center;gap:5px;padding:3px 0}
+.mn{font-size:10px;font-weight:600}
+.mn-sg{color:#BA7517}
+.mn-om{color:#185FA5}
+.mn-gfs{color:#3B6D11}
+.mn-mar{color:#0F6E56}
+.mv{font-size:11px;font-weight:600;text-align:right;font-family:'SF Mono',SFMono-Regular,Menlo,monospace}
+.sw{height:auto;position:relative;min-height:20px}
+.sw svg{display:block}
+.md{font-size:10px;color:#888;text-align:center}
+
+/* ── Spread-Balken ── */
+.sb{margin-top:5px;display:flex;align-items:center;gap:8px}
+.sl{font-size:9px;color:#72243E;font-weight:600;white-space:nowrap}
+.st{flex:1;height:5px;background:#FBEAF0;border-radius:3px;overflow:hidden}
+.sf{height:100%;background:#D4537E;border-radius:3px;transition:width .3s}
+.sv{font-size:9px;color:#72243E;font-weight:600;font-family:monospace;min-width:28px}
+
+/* ── Trennlinie ── */
+.sep{border:none;border-top:1px solid #e8ecf0;margin:8px 0}
+
+/* ── Performance-Grid (5 Spalten) ── */
+.pg5{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:6px}
+.pb{background:#f8fafc;border-radius:6px;padding:7px 4px;text-align:center}
+.pb .la{font-size:9px;color:#888;margin-bottom:1px;line-height:1.2}
+.pb .va{font-size:13px;font-weight:600;color:#1B3A5C;font-family:monospace}
+.pb .un{font-size:9px;color:#888}
+.pb .tw{font-size:8px;color:#aaa;margin-top:1px}
+
+/* ── Footer ── */
+.ft{padding:14px 0;text-align:center;font-size:10px;color:#bbb}
+
+/* ── Responsive ── */
+@media(max-width:480px){
+  .pg5{grid-template-columns:repeat(3,1fr)}
+  .hdr-cell{padding:16px 18px}
+  .hdr-inner h1{font-size:20px}
+  .mr{grid-template-columns:62px 40px minmax(0,1fr) 34px;gap:3px}
+  .scores .sc .big{font-size:20px}
+}
+</style>
+</head>
+<body>
+<div class="pg">
+
+<!-- HEADER — 1:1 wie Briefing Builder -->
+<table class="hdr-table" cellpadding="0" cellspacing="0">
+<tr><td class="hdr-cell">
+  <table class="hdr-inner" cellpadding="0" cellspacing="0">
+    <tr>
+      <td>
+        <h1>&#9875; Modellvergleich</h1>
+        <p class="subtitle">Split &middot; &Scaron;olta &middot; Bra&ccaron; &middot; Hvar &middot; Kor&ccaron;ula</p>
+      </td>
+      <td style="text-align:right;vertical-align:top">
+        <p class="date">Freitag, 1. Mai 2026</p>
+        <p class="time">Generiert 20:13 MESZ</p>
+      </td>
+    </tr>
+  </table>
+</td></tr>
+</table>
+
+<!-- BACK-LINK — auf weißer Fläche unter Header -->
+<div class="back-bar">
+  <a class="back-link" href="split_briefing.html">&larr; Zur&uuml;ck zum Briefing</a>
+</div>
+
+<!-- TABS -->
+<div class="tabs" id="dt"></div>
+
+<!-- BODY -->
+<div class="bd">
+  <div class="legend">
+    <div class="li"><div class="ld" style="background:#BA7517"></div>Stormglass</div>
+    <div class="li"><div class="ld" style="background:#185FA5"></div>Open-Meteo</div>
+    <div class="li"><div class="ld" style="background:#3B6D11"></div>GFS</div>
+    <div class="li"><div class="ld" style="background:#0F6E56"></div>Marine</div>
+  </div>
+  <div class="tgl-row" id="toggles"></div>
+  <div id="blocks"></div>
+</div>
+
+<!-- FOOTER -->
+<div class="ft">
+  Freitag, 1. Mai 2026 &middot; Generiert 20:13 MESZ<br>
+  Split Toernbriefing v1.0 &middot; n8n &middot; LM Studio (Gemma-4-E4B) &middot; Dufour 44
+</div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// Eingebettete Daten aus dem n8n-Workflow
+// ══════════════════════════════════════════════════════════════
+var D={"hourlyFlat":[[{"hour":0,"source":"noaa-gfs","wind":11.6,"dir":27,"gust":18.8,"wave":null,"wavePeriod":null,"pressure":1022.4,"current":null,"waterTemp":null,"airTemp":11.5},{"hour":0,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.3,"wavePeriod":2.8,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":0,"source":"open-meteo-wind","wind":4.6,"dir":33,"gust":16.1,"wave":null,"wavePeriod":null,"pressure":1022.7,"current":null,"waterTemp":null,"airTemp":13.2},{"hour":1,"source":"noaa-gfs","wind":11.7,"dir":32,"gust":19.7,"wave":null,"wavePeriod":null,"pressure":1022.3,"current":null,"waterTemp":null,"airTemp":11.2},{"hour":1,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.9,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":1,"source":"open-meteo-wind","wind":4.1,"dir":31,"gust":13.2,"wave":null,"wavePeriod":null,"pressure":1022.4,"current":null,"waterTemp":null,"airTemp":12.9},{"hour":2,"source":"noaa-gfs","wind":11.8,"dir":27,"gust":21.2,"wave":null,"wavePeriod":null,"pressure":1022.2,"current":null,"waterTemp":null,"airTemp":10.9},{"hour":2,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":3,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":2,"source":"open-meteo-wind","wind":3.4,"dir":31,"gust":12.3,"wave":null,"wavePeriod":null,"pressure":1022.7,"current":null,"waterTemp":null,"airTemp":12.8},{"hour":3,"source":"noaa-gfs","wind":11.3,"dir":31,"gust":21,"wave":null,"wavePeriod":null,"pressure":1022.1,"current":null,"waterTemp":null,"airTemp":10.7},{"hour":3,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":3.1,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":3,"source":"open-meteo-wind","wind":3.2,"dir":25,"gust":11.1,"wave":null,"wavePeriod":null,"pressure":1022.1,"current":null,"waterTemp":null,"airTemp":12.5},{"hour":4,"source":"noaa-gfs","wind":9.9,"dir":31,"gust":20,"wave":null,"wavePeriod":null,"pressure":1022,"current":null,"waterTemp":null,"airTemp":10.4},{"hour":4,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":3.2,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":4,"source":"open-meteo-wind","wind":3.1,"dir":22,"gust":10.3,"wave":null,"wavePeriod":null,"pressure":1022.2,"current":null,"waterTemp":null,"airTemp":12.4},{"hour":5,"source":"noaa-gfs","wind":9.6,"dir":29,"gust":19.1,"wave":null,"wavePeriod":null,"pressure":1021.8,"current":null,"waterTemp":null,"airTemp":10.1},{"hour":5,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.1,"wavePeriod":3.3,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":5,"source":"open-meteo-wind","wind":3.3,"dir":28,"gust":10.3,"wave":null,"wavePeriod":null,"pressure":1021.9,"current":null,"waterTemp":null,"airTemp":12},{"hour":6,"source":"noaa-gfs","wind":10,"dir":29,"gust":19.4,"wave":null,"wavePeriod":null,"pressure":1021.8,"current":null,"waterTemp":null,"airTemp":9.9},{"hour":6,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.1,"wavePeriod":3.4,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":6,"source":"open-meteo-wind","wind":3.6,"dir":29,"gust":10.1,"wave":null,"wavePeriod":null,"pressure":1022.1,"current":null,"waterTemp":null,"airTemp":11.9},{"hour":7,"source":"noaa-gfs","wind":10.9,"dir":29,"gust":20.6,"wave":null,"wavePeriod":null,"pressure":1022.1,"current":null,"waterTemp":null,"airTemp":10.5},{"hour":7,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.1,"wavePeriod":3.4,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":7,"source":"open-meteo-wind","wind":4.1,"dir":31,"gust":10.7,"wave":null,"wavePeriod":null,"pressure":1022.5,"current":null,"waterTemp":null,"airTemp":12.3},{"hour":8,"source":"noaa-gfs","wind":11.5,"dir":30,"gust":18.7,"wave":null,"wavePeriod":null,"pressure":1022.6,"current":null,"waterTemp":null,"airTemp":12.2},{"hour":8,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.1,"wavePeriod":3.4,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":8,"source":"open-meteo-wind","wind":5.1,"dir":40,"gust":14.6,"wave":null,"wavePeriod":null,"pressure":1022.8,"current":null,"waterTemp":null,"airTemp":13},{"hour":9,"source":"noaa-gfs","wind":13.1,"dir":35,"gust":17.3,"wave":null,"wavePeriod":null,"pressure":1022.7,"current":null,"waterTemp":null,"airTemp":13.3},{"hour":9,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.1,"wavePeriod":3.4,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":9,"source":"open-meteo-wind","wind":7.8,"dir":42,"gust":16.7,"wave":null,"wavePeriod":null,"pressure":1022.8,"current":null,"waterTemp":null,"airTemp":14.1},{"hour":10,"source":"noaa-gfs","wind":12.7,"dir":27,"gust":16.7,"wave":null,"wavePeriod":null,"pressure":1022.8,"current":null,"waterTemp":null,"airTemp":14.6},{"hour":10,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.1,"wavePeriod":3.5,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":10,"source":"open-meteo-wind","wind":7,"dir":46,"gust":17.5,"wave":null,"wavePeriod":null,"pressure":1022.7,"current":null,"waterTemp":null,"airTemp":15.4},{"hour":11,"source":"noaa-gfs","wind":11.2,"dir":14,"gust":16.3,"wave":null,"wavePeriod":null,"pressure":1022.8,"current":null,"waterTemp":null,"airTemp":15.9},{"hour":11,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.1,"wavePeriod":3.5,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":11,"source":"open-meteo-wind","wind":3.3,"dir":21,"gust":15,"wave":null,"wavePeriod":null,"pressure":1022.9,"current":null,"waterTemp":null,"airTemp":16.5},{"hour":12,"source":"noaa-gfs","wind":9,"dir":24,"gust":14,"wave":null,"wavePeriod":null,"pressure":1022.5,"current":null,"waterTemp":null,"airTemp":17},{"hour":12,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.1,"wavePeriod":3.5,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":12,"source":"open-meteo-wind","wind":3.6,"dir":22,"gust":9.3,"wave":null,"wavePeriod":null,"pressure":1022.8,"current":null,"waterTemp":null,"airTemp":17.5},{"hour":12,"source":"stormglass","wind":7.2,"dir":36,"gust":null,"wave":0.3,"wavePeriod":2.1,"pressure":null,"current":0,"waterTemp":17.1,"airTemp":null},{"hour":13,"source":"noaa-gfs","wind":9.6,"dir":47,"gust":13,"wave":null,"wavePeriod":null,"pressure":1021.9,"current":null,"waterTemp":null,"airTemp":18},{"hour":13,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.1,"wavePeriod":3.4,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":13,"source":"open-meteo-wind","wind":3.7,"dir":43,"gust":10.1,"wave":null,"wavePeriod":null,"pressure":1022.2,"current":null,"waterTemp":null,"airTemp":18.4},{"hour":13,"source":"stormglass","wind":8.2,"dir":26,"gust":null,"wave":0.3,"wavePeriod":2,"pressure":null,"current":0,"waterTemp":17.2,"airTemp":null},{"hour":14,"source":"noaa-gfs","wind":7.5,"dir":57,"gust":11.9,"wave":null,"wavePeriod":null,"pressure":1021.8,"current":null,"waterTemp":null,"airTemp":18.4},{"hour":14,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.1,"wavePeriod":3.3,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":14,"source":"open-meteo-wind","wind":2.9,"dir":86,"gust":12.3,"wave":null,"wavePeriod":null,"pressure":1021.8,"current":null,"waterTemp":null,"airTemp":18.6},{"hour":14,"source":"stormglass","wind":9.2,"dir":15,"gust":null,"wave":0.3,"wavePeriod":1.9,"pressure":null,"current":0,"waterTemp":17.2,"airTemp":null},{"hour":15,"source":"noaa-gfs","wind":5.8,"dir":57,"gust":10.5,"wave":null,"wavePeriod":null,"pressure":1021.5,"current":null,"waterTemp":null,"airTemp":18.5},{"hour":15,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.1,"wavePeriod":3,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":15,"source":"open-meteo-wind","wind":3.9,"dir":81,"gust":12.3,"wave":null,"wavePeriod":null,"pressure":1021.1,"current":null,"waterTemp":null,"airTemp":18.9},{"hour":15,"source":"stormglass","wind":8.9,"dir":8,"gust":null,"wave":0.4,"wavePeriod":2.1,"pressure":null,"current":0,"waterTemp":17.3,"airTemp":null},{"hour":16,"source":"noaa-gfs","wind":5.7,"dir":62,"gust":10.9,"wave":null,"wavePeriod":null,"pressure":1021.1,"current":null,"waterTemp":null,"airTemp":18.4},{"hour":16,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.1,"wavePeriod":2.6,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":16,"source":"open-meteo-wind","wind":5.3,"dir":84,"gust":14.2,"wave":null,"wavePeriod":null,"pressure":1021,"current":null,"waterTemp":null,"airTemp":19.1},{"hour":16,"source":"stormglass","wind":8.6,"dir":360,"gust":null,"wave":0.5,"wavePeriod":2.3,"pressure":null,"current":0,"waterTemp":17.3,"airTemp":null},{"hour":17,"source":"noaa-gfs","wind":7.7,"dir":41,"gust":13.4,"wave":null,"wavePeriod":null,"pressure":1020.8,"current":null,"waterTemp":null,"airTemp":18.3},{"hour":17,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.3,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":17,"source":"open-meteo-wind","wind":6.4,"dir":67,"gust":14.6,"wave":null,"wavePeriod":null,"pressure":1020.9,"current":null,"waterTemp":null,"airTemp":19.4},{"hour":17,"source":"stormglass","wind":8.2,"dir":352,"gust":null,"wave":0.6,"wavePeriod":2.5,"pressure":null,"current":0,"waterTemp":17.2,"airTemp":null},{"hour":18,"source":"noaa-gfs","wind":14,"dir":25,"gust":20.6,"wave":null,"wavePeriod":null,"pressure":1020.8,"current":null,"waterTemp":null,"airTemp":18},{"hour":18,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.1,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":18,"source":"open-meteo-wind","wind":8.4,"dir":54,"gust":19.4,"wave":null,"wavePeriod":null,"pressure":1020.9,"current":null,"waterTemp":null,"airTemp":19},{"hour":18,"source":"stormglass","wind":8.9,"dir":10,"gust":null,"wave":0.6,"wavePeriod":2.4,"pressure":null,"current":0,"waterTemp":17.2,"airTemp":null},{"hour":19,"source":"noaa-gfs","wind":16.2,"dir":24,"gust":21.6,"wave":null,"wavePeriod":null,"pressure":1021.1,"current":null,"waterTemp":null,"airTemp":16.7},{"hour":19,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.3,"wavePeriod":2,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":19,"source":"open-meteo-wind","wind":10.5,"dir":39,"gust":21.8,"wave":null,"wavePeriod":null,"pressure":1021.1,"current":null,"waterTemp":null,"airTemp":18.3},{"hour":19,"source":"stormglass","wind":9.6,"dir":28,"gust":null,"wave":0.6,"wavePeriod":2.3,"pressure":null,"current":0,"waterTemp":17.1,"airTemp":null},{"hour":20,"source":"noaa-gfs","wind":14.4,"dir":26,"gust":21.4,"wave":null,"wavePeriod":null,"pressure":1021.8,"current":null,"waterTemp":null,"airTemp":15.5},{"hour":20,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.3,"wavePeriod":2,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":20,"source":"open-meteo-wind","wind":11,"dir":30,"gust":23.3,"wave":null,"wavePeriod":null,"pressure":1021.5,"current":null,"waterTemp":null,"airTemp":17},{"hour":20,"source":"stormglass","wind":10.2,"dir":46,"gust":null,"wave":0.6,"wavePeriod":2.1,"pressure":null,"current":0,"waterTemp":17.1,"airTemp":null},{"hour":21,"source":"noaa-gfs","wind":13.8,"dir":24,"gust":22.7,"wave":null,"wavePeriod":null,"pressure":1022.7,"current":null,"waterTemp":null,"airTemp":14.9},{"hour":21,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.3,"wavePeriod":2.2,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":21,"source":"open-meteo-wind","wind":10.8,"dir":30,"gust":24.9,"wave":null,"wavePeriod":null,"pressure":1022.4,"current":null,"waterTemp":null,"airTemp":16.1},{"hour":21,"source":"stormglass","wind":9,"dir":44,"gust":null,"wave":0.6,"wavePeriod":2.2,"pressure":null,"current":0,"waterTemp":17,"airTemp":null},{"hour":22,"source":"noaa-gfs","wind":14,"dir":27,"gust":22.7,"wave":null,"wavePeriod":null,"pressure":1023,"current":null,"waterTemp":null,"airTemp":14.3},{"hour":22,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.3,"wavePeriod":2.5,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":22,"source":"open-meteo-wind","wind":7.7,"dir":34,"gust":27.2,"wave":null,"wavePeriod":null,"pressure":1022.7,"current":null,"waterTemp":null,"airTemp":15.7},{"hour":22,"source":"stormglass","wind":7.8,"dir":42,"gust":null,"wave":0.6,"wavePeriod":2.3,"pressure":null,"current":0,"waterTemp":17,"airTemp":null},{"hour":23,"source":"noaa-gfs","wind":13.2,"dir":22,"gust":21.6,"wave":null,"wavePeriod":null,"pressure":1023.2,"current":null,"waterTemp":null,"airTemp":13.7},{"hour":23,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.3,"wavePeriod":2.8,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":23,"source":"open-meteo-wind","wind":5.1,"dir":32,"gust":20,"wave":null,"wavePeriod":null,"pressure":1023.5,"current":null,"waterTemp":null,"airTemp":15.4},{"hour":23,"source":"stormglass","wind":6.6,"dir":39,"gust":null,"wave":0.7,"wavePeriod":2.4,"pressure":null,"current":0,"waterTemp":17,"airTemp":null}],[{"hour":0,"source":"noaa-gfs","wind":12.3,"dir":16,"gust":20.6,"wave":null,"wavePeriod":null,"pressure":1023.3,"current":null,"waterTemp":null,"airTemp":13},{"hour":0,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":3.1,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":0,"source":"open-meteo-wind","wind":3.9,"dir":33,"gust":15,"wave":null,"wavePeriod":null,"pressure":1024,"current":null,"waterTemp":null,"airTemp":15.1},{"hour":0,"source":"stormglass","wind":6.2,"dir":27,"gust":null,"wave":0.6,"wavePeriod":2.4,"pressure":null,"current":0,"waterTemp":16.9,"airTemp":null},{"hour":1,"source":"noaa-gfs","wind":12.7,"dir":19,"gust":22,"wave":null,"wavePeriod":null,"pressure":1023.3,"current":null,"waterTemp":null,"airTemp":12.7},{"hour":1,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":3.5,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":1,"source":"open-meteo-wind","wind":3.2,"dir":17,"gust":14.2,"wave":null,"wavePeriod":null,"pressure":1024.1,"current":null,"waterTemp":null,"airTemp":15},{"hour":1,"source":"stormglass","wind":5.7,"dir":14,"gust":null,"wave":0.5,"wavePeriod":2.3,"pressure":null,"current":0,"waterTemp":16.9,"airTemp":null},{"hour":2,"source":"noaa-gfs","wind":12.5,"dir":23,"gust":21.2,"wave":null,"wavePeriod":null,"pressure":1023.1,"current":null,"waterTemp":null,"airTemp":12.6},{"hour":2,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":3.7,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":2,"source":"open-meteo-wind","wind":3.1,"dir":4,"gust":11.1,"wave":null,"wavePeriod":null,"pressure":1023.9,"current":null,"waterTemp":null,"airTemp":14.8},{"hour":2,"source":"stormglass","wind":5.3,"dir":1,"gust":null,"wave":0.4,"wavePeriod":2.3,"pressure":null,"current":0,"waterTemp":16.9,"airTemp":null},{"hour":3,"source":"noaa-gfs","wind":11.8,"dir":25,"gust":21.6,"wave":null,"wavePeriod":null,"pressure":1023.1,"current":null,"waterTemp":null,"airTemp":12.4},{"hour":3,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":3.7,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":3,"source":"open-meteo-wind","wind":3.2,"dir":349,"gust":10.3,"wave":null,"wavePeriod":null,"pressure":1023.7,"current":null,"waterTemp":null,"airTemp":14.7},{"hour":3,"source":"stormglass","wind":5,"dir":0,"gust":null,"wave":0.4,"wavePeriod":2.2,"pressure":null,"current":0,"waterTemp":16.8,"airTemp":null},{"hour":4,"source":"noaa-gfs","wind":11.2,"dir":28,"gust":20.8,"wave":null,"wavePeriod":null,"pressure":1023.1,"current":null,"waterTemp":null,"airTemp":12.1},{"hour":4,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":3.7,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":4,"source":"open-meteo-wind","wind":3.2,"dir":335,"gust":9.9,"wave":null,"wavePeriod":null,"pressure":1023.7,"current":null,"waterTemp":null,"airTemp":14.5},{"hour":4,"source":"stormglass","wind":4.7,"dir":359,"gust":null,"wave":0.3,"wavePeriod":2.2,"pressure":null,"current":0,"waterTemp":16.8,"airTemp":null},{"hour":5,"source":"noaa-gfs","wind":10.2,"dir":24,"gust":19.1,"wave":null,"wavePeriod":null,"pressure":1022.9,"current":null,"waterTemp":null,"airTemp":11.8},{"hour":5,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.1,"wavePeriod":3.6,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":5,"source":"open-meteo-wind","wind":3.2,"dir":322,"gust":9.5,"wave":null,"wavePeriod":null,"pressure":1023.6,"current":null,"waterTemp":null,"airTemp":14.3},{"hour":5,"source":"stormglass","wind":4.4,"dir":358,"gust":null,"wave":0.3,"wavePeriod":2.1,"pressure":null,"current":0,"waterTemp":16.8,"airTemp":null},{"hour":6,"source":"noaa-gfs","wind":9.1,"dir":23,"gust":17.7,"wave":null,"wavePeriod":null,"pressure":1022.9,"current":null,"waterTemp":null,"airTemp":11.5},{"hour":6,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":3.4,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":6,"source":"open-meteo-wind","wind":3,"dir":315,"gust":11.3,"wave":null,"wavePeriod":null,"pressure":1023.8,"current":null,"waterTemp":null,"airTemp":14.1},{"hour":6,"source":"stormglass","wind":4.2,"dir":356,"gust":null,"wave":0.3,"wavePeriod":2.1,"pressure":null,"current":0,"waterTemp":16.8,"airTemp":null},{"hour":7,"source":"noaa-gfs","wind":8.3,"dir":24,"gust":17.9,"wave":null,"wavePeriod":null,"pressure":1023.2,"current":null,"waterTemp":null,"airTemp":12.2},{"hour":7,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":3.2,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":7,"source":"open-meteo-wind","wind":2.9,"dir":318,"gust":10.9,"wave":null,"wavePeriod":null,"pressure":1024.2,"current":null,"waterTemp":null,"airTemp":14.7},{"hour":7,"source":"stormglass","wind":4.1,"dir":355,"gust":null,"wave":0.4,"wavePeriod":2.1,"pressure":null,"current":0,"waterTemp":16.8,"airTemp":null},{"hour":8,"source":"noaa-gfs","wind":8.5,"dir":27,"gust":17.5,"wave":null,"wavePeriod":null,"pressure":1023.4,"current":null,"waterTemp":null,"airTemp":14.2},{"hour":8,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":3.1,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":8,"source":"open-meteo-wind","wind":3.3,"dir":332,"gust":11.3,"wave":null,"wavePeriod":null,"pressure":1024.1,"current":null,"waterTemp":null,"airTemp":16.1},{"hour":8,"source":"stormglass","wind":3.9,"dir":354,"gust":null,"wave":0.4,"wavePeriod":2.1,"pressure":null,"current":0,"waterTemp":16.8,"airTemp":null},{"hour":9,"source":"noaa-gfs","wind":8.4,"dir":22,"gust":15.6,"wave":null,"wavePeriod":null,"pressure":1023.4,"current":null,"waterTemp":null,"airTemp":15.9},{"hour":9,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":3.1,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":9,"source":"open-meteo-wind","wind":6.2,"dir":356,"gust":12.4,"wave":null,"wavePeriod":null,"pressure":1023.8,"current":null,"waterTemp":null,"airTemp":17.1},{"hour":9,"source":"stormglass","wind":4.8,"dir":347,"gust":null,"wave":0.4,"wavePeriod":2.1,"pressure":null,"current":0,"waterTemp":16.8,"airTemp":null},{"hour":10,"source":"noaa-gfs","wind":8.5,"dir":20,"gust":15,"wave":null,"wavePeriod":null,"pressure":1023.4,"current":null,"waterTemp":null,"airTemp":17},{"hour":10,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":3.2,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":10,"source":"open-meteo-wind","wind":7.7,"dir":10,"gust":17.3,"wave":null,"wavePeriod":null,"pressure":1023.4,"current":null,"waterTemp":null,"airTemp":18.3},{"hour":10,"source":"stormglass","wind":5.6,"dir":340,"gust":null,"wave":0.4,"wavePeriod":2.1,"pressure":null,"current":0,"waterTemp":16.9,"airTemp":null},{"hour":11,"source":"noaa-gfs","wind":6,"dir":356,"gust":11.4,"wave":null,"wavePeriod":null,"pressure":1023.2,"current":null,"waterTemp":null,"airTemp":18},{"hour":11,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.1,"wavePeriod":3.2,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":11,"source":"open-meteo-wind","wind":8.6,"dir":28,"gust":19.2,"wave":null,"wavePeriod":null,"pressure":1023.2,"current":null,"waterTemp":null,"airTemp":19.3},{"hour":11,"source":"stormglass","wind":6.5,"dir":334,"gust":null,"wave":0.4,"wavePeriod":2.1,"pressure":null,"current":0,"waterTemp":17,"airTemp":null},{"hour":12,"source":"noaa-gfs","wind":5.7,"dir":319,"gust":8.4,"wave":null,"wavePeriod":null,"pressure":1022.7,"current":null,"waterTemp":null,"airTemp":18.5},{"hour":12,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":3.1,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":12,"source":"open-meteo-wind","wind":5.5,"dir":8,"gust":19.2,"wave":null,"wavePeriod":null,"pressure":1022.5,"current":null,"waterTemp":null,"airTemp":20.2},{"hour":12,"source":"stormglass","wind":7.8,"dir":324,"gust":null,"wave":0.4,"wavePeriod":2.2,"pressure":null,"current":0,"waterTemp":17.2,"airTemp":null},{"hour":13,"source":"noaa-gfs","wind":6.8,"dir":301,"gust":9.9,"wave":null,"wavePeriod":null,"pressure":1022.2,"current":null,"waterTemp":null,"airTemp":18.9},{"hour":13,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.8,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":13,"source":"open-meteo-wind","wind":5.9,"dir":343,"gust":14.2,"wave":null,"wavePeriod":null,"pressure":1022,"current":null,"waterTemp":null,"airTemp":21.1},{"hour":13,"source":"stormglass","wind":9.2,"dir":315,"gust":null,"wave":0.4,"wavePeriod":2.2,"pressure":null,"current":0,"waterTemp":17.4,"airTemp":null},{"hour":14,"source":"noaa-gfs","wind":7.2,"dir":294,"gust":11.3,"wave":null,"wavePeriod":null,"pressure":1022,"current":null,"waterTemp":null,"airTemp":19.1},{"hour":14,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.7,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":14,"source":"open-meteo-wind","wind":7.3,"dir":323,"gust":17.3,"wave":null,"wavePeriod":null,"pressure":1021.7,"current":null,"waterTemp":null,"airTemp":20.4},{"hour":14,"source":"stormglass","wind":10.6,"dir":306,"gust":null,"wave":0.5,"wavePeriod":2.2,"pressure":null,"current":0,"waterTemp":17.4,"airTemp":null},{"hour":15,"source":"noaa-gfs","wind":9.7,"dir":296,"gust":13.2,"wave":null,"wavePeriod":null,"pressure":1021.5,"current":null,"waterTemp":null,"airTemp":18.9},{"hour":15,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.3,"wavePeriod":2.8,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":15,"source":"open-meteo-wind","wind":9.6,"dir":294,"gust":19.1,"wave":null,"wavePeriod":null,"pressure":1021.1,"current":null,"waterTemp":null,"airTemp":19.5},{"hour":15,"source":"stormglass","wind":11.8,"dir":306,"gust":null,"wave":0.5,"wavePeriod":2.3,"pressure":null,"current":0.1,"waterTemp":17.3,"airTemp":null},{"hour":16,"source":"noaa-gfs","wind":11.8,"dir":292,"gust":15,"wave":null,"wavePeriod":null,"pressure":1021.1,"current":null,"waterTemp":null,"airTemp":18.1},{"hour":16,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.4,"wavePeriod":3.1,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":16,"source":"open-meteo-wind","wind":11.3,"dir":289,"gust":20.8,"wave":null,"wavePeriod":null,"pressure":1020.4,"current":null,"waterTemp":null,"airTemp":19.5},{"hour":16,"source":"stormglass","wind":13.1,"dir":307,"gust":null,"wave":0.6,"wavePeriod":2.4,"pressure":null,"current":0.1,"waterTemp":17.2,"airTemp":null},{"hour":17,"source":"noaa-gfs","wind":12.4,"dir":290,"gust":17.1,"wave":null,"wavePeriod":null,"pressure":1020.9,"current":null,"waterTemp":null,"airTemp":17.7},{"hour":17,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.5,"wavePeriod":3.3,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":17,"source":"open-meteo-wind","wind":11.7,"dir":289,"gust":20.4,"wave":null,"wavePeriod":null,"pressure":1020.3,"current":null,"waterTemp":null,"airTemp":19.4},{"hour":17,"source":"stormglass","wind":14.3,"dir":307,"gust":null,"wave":0.7,"wavePeriod":2.5,"pressure":null,"current":0.1,"waterTemp":17.2,"airTemp":null},{"hour":18,"source":"noaa-gfs","wind":12.3,"dir":291,"gust":19.2,"wave":null,"wavePeriod":null,"pressure":1020.6,"current":null,"waterTemp":null,"airTemp":17},{"hour":18,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.5,"wavePeriod":3.4,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":18,"source":"open-meteo-wind","wind":9.9,"dir":290,"gust":28.4,"wave":null,"wavePeriod":null,"pressure":1019.9,"current":null,"waterTemp":null,"airTemp":19.1},{"hour":18,"source":"stormglass","wind":11.7,"dir":302,"gust":null,"wave":0.7,"wavePeriod":2.6,"pressure":null,"current":0.1,"waterTemp":17.1,"airTemp":null},{"hour":19,"source":"noaa-gfs","wind":12.7,"dir":297,"gust":20.8,"wave":null,"wavePeriod":null,"pressure":1020.4,"current":null,"waterTemp":null,"airTemp":16.4},{"hour":19,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.5,"wavePeriod":3.5,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":19,"source":"open-meteo-wind","wind":8.4,"dir":289,"gust":29.2,"wave":null,"wavePeriod":null,"pressure":1019.9,"current":null,"waterTemp":null,"airTemp":18.4},{"hour":19,"source":"stormglass","wind":9.1,"dir":296,"gust":null,"wave":0.8,"wavePeriod":2.8,"pressure":null,"current":0.1,"waterTemp":17.1,"airTemp":null},{"hour":20,"source":"noaa-gfs","wind":11.6,"dir":308,"gust":20.4,"wave":null,"wavePeriod":null,"pressure":1020.6,"current":null,"waterTemp":null,"airTemp":15.6},{"hour":20,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.5,"wavePeriod":3.6,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":20,"source":"open-meteo-wind","wind":6.4,"dir":290,"gust":22.9,"wave":null,"wavePeriod":null,"pressure":1019.8,"current":null,"waterTemp":null,"airTemp":17.5},{"hour":20,"source":"stormglass","wind":6.5,"dir":291,"gust":null,"wave":0.9,"wavePeriod":2.9,"pressure":null,"current":0.1,"waterTemp":17,"airTemp":null},{"hour":21,"source":"noaa-gfs","wind":7.9,"dir":320,"gust":16.5,"wave":null,"wavePeriod":null,"pressure":1021,"current":null,"waterTemp":null,"airTemp":15.2},{"hour":21,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.4,"wavePeriod":3.6,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":21,"source":"open-meteo-wind","wind":4.6,"dir":285,"gust":16.3,"wave":null,"wavePeriod":null,"pressure":1020,"current":null,"waterTemp":null,"airTemp":16.9},{"hour":21,"source":"stormglass","wind":5.3,"dir":342,"gust":null,"wave":0.8,"wavePeriod":2.8,"pressure":null,"current":0.1,"waterTemp":17,"airTemp":null},{"hour":22,"source":"noaa-gfs","wind":3.6,"dir":344,"gust":9,"wave":null,"wavePeriod":null,"pressure":1020.9,"current":null,"waterTemp":null,"airTemp":15.1},{"hour":22,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.4,"wavePeriod":3.6,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":22,"source":"open-meteo-wind","wind":3.5,"dir":286,"gust":10.5,"wave":null,"wavePeriod":null,"pressure":1020,"current":null,"waterTemp":null,"airTemp":16.5},{"hour":22,"source":"stormglass","wind":4.1,"dir":33,"gust":null,"wave":0.7,"wavePeriod":2.7,"pressure":null,"current":0.1,"waterTemp":16.9,"airTemp":null},{"hour":23,"source":"noaa-gfs","wind":3.2,"dir":57,"gust":4.3,"wave":null,"wavePeriod":null,"pressure":1020.7,"current":null,"waterTemp":null,"airTemp":15},{"hour":23,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.4,"wavePeriod":3.7,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":23,"source":"open-meteo-wind","wind":2.9,"dir":274,"gust":8.7,"wave":null,"wavePeriod":null,"pressure":1019.9,"current":null,"waterTemp":null,"airTemp":16.2},{"hour":23,"source":"stormglass","wind":2.9,"dir":85,"gust":null,"wave":0.5,"wavePeriod":2.6,"pressure":null,"current":0.1,"waterTemp":16.9,"airTemp":null}],[{"hour":0,"source":"noaa-gfs","wind":4.3,"dir":66,"gust":3.1,"wave":null,"wavePeriod":null,"pressure":1020.5,"current":null,"waterTemp":null,"airTemp":14.7},{"hour":0,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.9,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":0,"source":"open-meteo-wind","wind":2.2,"dir":285,"gust":6.8,"wave":null,"wavePeriod":null,"pressure":1020,"current":null,"waterTemp":null,"airTemp":16.3},{"hour":0,"source":"stormglass","wind":2.7,"dir":79,"gust":null,"wave":0.5,"wavePeriod":2.6,"pressure":null,"current":0.1,"waterTemp":16.9,"airTemp":null},{"hour":1,"source":"noaa-gfs","wind":4,"dir":55,"gust":2.7,"wave":null,"wavePeriod":null,"pressure":1020.3,"current":null,"waterTemp":null,"airTemp":14.4},{"hour":1,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.9,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":1,"source":"open-meteo-wind","wind":1.7,"dir":297,"gust":5.6,"wave":null,"wavePeriod":null,"pressure":1019.9,"current":null,"waterTemp":null,"airTemp":16.2},{"hour":1,"source":"stormglass","wind":2.5,"dir":74,"gust":null,"wave":0.4,"wavePeriod":2.5,"pressure":null,"current":0,"waterTemp":16.9,"airTemp":null},{"hour":2,"source":"noaa-gfs","wind":3.7,"dir":32,"gust":2.5,"wave":null,"wavePeriod":null,"pressure":1020,"current":null,"waterTemp":null,"airTemp":14.1},{"hour":2,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.9,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":2,"source":"open-meteo-wind","wind":1.8,"dir":302,"gust":3.5,"wave":null,"wavePeriod":null,"pressure":1019.7,"current":null,"waterTemp":null,"airTemp":16},{"hour":2,"source":"stormglass","wind":2.3,"dir":69,"gust":null,"wave":0.4,"wavePeriod":2.5,"pressure":null,"current":0,"waterTemp":16.9,"airTemp":null},{"hour":3,"source":"noaa-gfs","wind":4,"dir":23,"gust":2.7,"wave":null,"wavePeriod":null,"pressure":1019.8,"current":null,"waterTemp":null,"airTemp":13.7},{"hour":3,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.9,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":3,"source":"open-meteo-wind","wind":2.3,"dir":301,"gust":5.5,"wave":null,"wavePeriod":null,"pressure":1019.4,"current":null,"waterTemp":null,"airTemp":15.9},{"hour":3,"source":"stormglass","wind":1.7,"dir":63,"gust":null,"wave":0.3,"wavePeriod":2.5,"pressure":null,"current":0,"waterTemp":16.9,"airTemp":null},{"hour":4,"source":"noaa-gfs","wind":4,"dir":29,"gust":3.3,"wave":null,"wavePeriod":null,"pressure":1019.7,"current":null,"waterTemp":null,"airTemp":13.4},{"hour":4,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.9,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":4,"source":"open-meteo-wind","wind":1.8,"dir":311,"gust":5.2,"wave":null,"wavePeriod":null,"pressure":1019.1,"current":null,"waterTemp":null,"airTemp":15.9},{"hour":4,"source":"stormglass","wind":1,"dir":57,"gust":null,"wave":0.3,"wavePeriod":2.6,"pressure":null,"current":0,"waterTemp":16.8,"airTemp":null},{"hour":5,"source":"noaa-gfs","wind":3.8,"dir":49,"gust":3.5,"wave":null,"wavePeriod":null,"pressure":1019.6,"current":null,"waterTemp":null,"airTemp":13.2},{"hour":5,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.9,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":5,"source":"open-meteo-wind","wind":1.7,"dir":315,"gust":4.9,"wave":null,"wavePeriod":null,"pressure":1018.9,"current":null,"waterTemp":null,"airTemp":15.9},{"hour":5,"source":"stormglass","wind":0.3,"dir":51,"gust":null,"wave":0.3,"wavePeriod":2.6,"pressure":null,"current":0,"waterTemp":16.8,"airTemp":null},{"hour":6,"source":"noaa-gfs","wind":3.8,"dir":66,"gust":4.1,"wave":null,"wavePeriod":null,"pressure":1019.6,"current":null,"waterTemp":null,"airTemp":13},{"hour":6,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.9,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":6,"source":"open-meteo-wind","wind":1.2,"dir":321,"gust":5.2,"wave":null,"wavePeriod":null,"pressure":1019,"current":null,"waterTemp":null,"airTemp":16},{"hour":6,"source":"stormglass","wind":0.6,"dir":25,"gust":null,"wave":0.2,"wavePeriod":2.6,"pressure":null,"current":0,"waterTemp":16.8,"airTemp":null},{"hour":7,"source":"noaa-gfs","wind":3.5,"dir":84,"gust":4.3,"wave":null,"wavePeriod":null,"pressure":1019.8,"current":null,"waterTemp":null,"airTemp":13.9},{"hour":7,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.9,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":7,"source":"open-meteo-wind","wind":1,"dir":323,"gust":4.6,"wave":null,"wavePeriod":null,"pressure":1019.2,"current":null,"waterTemp":null,"airTemp":16.6},{"hour":7,"source":"stormglass","wind":0.9,"dir":359,"gust":null,"wave":0.2,"wavePeriod":2.6,"pressure":null,"current":0,"waterTemp":16.8,"airTemp":null},{"hour":8,"source":"noaa-gfs","wind":3.1,"dir":97,"gust":4.6,"wave":null,"wavePeriod":null,"pressure":1020.1,"current":null,"waterTemp":null,"airTemp":15.4},{"hour":8,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.9,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":8,"source":"open-meteo-wind","wind":0.2,"dir":270,"gust":4.5,"wave":null,"wavePeriod":null,"pressure":1019.3,"current":null,"waterTemp":null,"airTemp":18.2},{"hour":8,"source":"stormglass","wind":1.2,"dir":333,"gust":null,"wave":0.2,"wavePeriod":2.6,"pressure":null,"current":0,"waterTemp":16.8,"airTemp":null},{"hour":9,"source":"noaa-gfs","wind":2.5,"dir":122,"gust":4.1,"wave":null,"wavePeriod":null,"pressure":1020.3,"current":null,"waterTemp":null,"airTemp":16.8},{"hour":9,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.9,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":9,"source":"open-meteo-wind","wind":1.8,"dir":13,"gust":6,"wave":null,"wavePeriod":null,"pressure":1019.3,"current":null,"waterTemp":null,"airTemp":19.9},{"hour":9,"source":"stormglass","wind":2.5,"dir":323,"gust":null,"wave":0.2,"wavePeriod":2.6,"pressure":null,"current":0,"waterTemp":17,"airTemp":null},{"hour":10,"source":"noaa-gfs","wind":1.8,"dir":148,"gust":3.3,"wave":null,"wavePeriod":null,"pressure":1020.4,"current":null,"waterTemp":null,"airTemp":18},{"hour":10,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.9,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":10,"source":"open-meteo-wind","wind":5.4,"dir":41,"gust":12.3,"wave":null,"wavePeriod":null,"pressure":1019.4,"current":null,"waterTemp":null,"airTemp":20.8},{"hour":10,"source":"stormglass","wind":3.8,"dir":314,"gust":null,"wave":0.2,"wavePeriod":2.6,"pressure":null,"current":0,"waterTemp":17.1,"airTemp":null},{"hour":11,"source":"noaa-gfs","wind":2.8,"dir":196,"gust":3.5,"wave":null,"wavePeriod":null,"pressure":1020.4,"current":null,"waterTemp":null,"airTemp":18.7},{"hour":11,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.9,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":11,"source":"open-meteo-wind","wind":5.5,"dir":55,"gust":13.4,"wave":null,"wavePeriod":null,"pressure":1019.3,"current":null,"waterTemp":null,"airTemp":21.5},{"hour":11,"source":"stormglass","wind":5.2,"dir":304,"gust":null,"wave":0.2,"wavePeriod":2.6,"pressure":null,"current":0,"waterTemp":17.2,"airTemp":null},{"hour":12,"source":"noaa-gfs","wind":4.7,"dir":218,"gust":3.7,"wave":null,"wavePeriod":null,"pressure":1020.2,"current":null,"waterTemp":null,"airTemp":18.8},{"hour":12,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.8,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":12,"source":"open-meteo-wind","wind":1.9,"dir":84,"gust":12.9,"wave":null,"wavePeriod":null,"pressure":1019,"current":null,"waterTemp":null,"airTemp":22.1},{"hour":12,"source":"stormglass","wind":6.6,"dir":299,"gust":null,"wave":0.2,"wavePeriod":2.4,"pressure":null,"current":0,"waterTemp":17.4,"airTemp":null},{"hour":13,"source":"noaa-gfs","wind":6.4,"dir":232,"gust":4.1,"wave":null,"wavePeriod":null,"pressure":1020,"current":null,"waterTemp":null,"airTemp":18.7},{"hour":13,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.8,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":13,"source":"open-meteo-wind","wind":1.5,"dir":230,"gust":6.4,"wave":null,"wavePeriod":null,"pressure":1018.6,"current":null,"waterTemp":null,"airTemp":22.2},{"hour":14,"source":"noaa-gfs","wind":7.7,"dir":236,"gust":5.8,"wave":null,"wavePeriod":null,"pressure":1019.7,"current":null,"waterTemp":null,"airTemp":18.8},{"hour":14,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.7,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":14,"source":"open-meteo-wind","wind":7.1,"dir":253,"gust":16.3,"wave":null,"wavePeriod":null,"pressure":1018.4,"current":null,"waterTemp":null,"airTemp":22.1},{"hour":15,"source":"noaa-gfs","wind":8.1,"dir":243,"gust":7.8,"wave":null,"wavePeriod":null,"pressure":1019.4,"current":null,"waterTemp":null,"airTemp":18.6},{"hour":15,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.3,"wavePeriod":2.7,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":15,"source":"open-meteo-wind","wind":8.7,"dir":269,"gust":18.8,"wave":null,"wavePeriod":null,"pressure":1018,"current":null,"waterTemp":null,"airTemp":21.4},{"hour":16,"source":"noaa-gfs","wind":8.1,"dir":243,"gust":8.5,"wave":null,"wavePeriod":null,"pressure":1019.1,"current":null,"waterTemp":null,"airTemp":18.3},{"hour":16,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.3,"wavePeriod":2.7,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":16,"source":"open-meteo-wind","wind":8.6,"dir":265,"gust":18.5,"wave":null,"wavePeriod":null,"pressure":1017.7,"current":null,"waterTemp":null,"airTemp":21.3},{"hour":17,"source":"noaa-gfs","wind":6.9,"dir":255,"gust":7,"wave":null,"wavePeriod":null,"pressure":1019.1,"current":null,"waterTemp":null,"airTemp":18},{"hour":17,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.3,"wavePeriod":2.7,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":17,"source":"open-meteo-wind","wind":8.7,"dir":283,"gust":17.3,"wave":null,"wavePeriod":null,"pressure":1017.7,"current":null,"waterTemp":null,"airTemp":20.7},{"hour":18,"source":"noaa-gfs","wind":4.1,"dir":289,"gust":5.1,"wave":null,"wavePeriod":null,"pressure":1018.9,"current":null,"waterTemp":null,"airTemp":17.8},{"hour":18,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.3,"wavePeriod":2.7,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":18,"source":"open-meteo-wind","wind":8.4,"dir":288,"gust":21,"wave":null,"wavePeriod":null,"pressure":1017.9,"current":null,"waterTemp":null,"airTemp":20},{"hour":19,"source":"noaa-gfs","wind":2.3,"dir":336,"gust":2.9,"wave":null,"wavePeriod":null,"pressure":1018.6,"current":null,"waterTemp":null,"airTemp":17.5},{"hour":19,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.3,"wavePeriod":2.7,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":19,"source":"open-meteo-wind","wind":6.4,"dir":282,"gust":22,"wave":null,"wavePeriod":null,"pressure":1017.7,"current":null,"waterTemp":null,"airTemp":19.5},{"hour":20,"source":"noaa-gfs","wind":1.1,"dir":315,"gust":7.2,"wave":null,"wavePeriod":null,"pressure":1018.9,"current":null,"waterTemp":null,"airTemp":16.1},{"hour":20,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.3,"wavePeriod":2.8,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":20,"source":"open-meteo-wind","wind":4.5,"dir":280,"gust":19.1,"wave":null,"wavePeriod":null,"pressure":1017.8,"current":null,"waterTemp":null,"airTemp":18.4},{"hour":21,"source":"noaa-gfs","wind":3.6,"dir":279,"gust":5.8,"wave":null,"wavePeriod":null,"pressure":1019.5,"current":null,"waterTemp":null,"airTemp":15.7},{"hour":21,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.7,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":21,"source":"open-meteo-wind","wind":4.3,"dir":267,"gust":16.3,"wave":null,"wavePeriod":null,"pressure":1018.3,"current":null,"waterTemp":null,"airTemp":17.5},{"hour":22,"source":"noaa-gfs","wind":2.5,"dir":342,"gust":3.9,"wave":null,"wavePeriod":null,"pressure":1019.6,"current":null,"waterTemp":null,"airTemp":15.3},{"hour":22,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.7,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":22,"source":"open-meteo-wind","wind":3.7,"dir":261,"gust":14,"wave":null,"wavePeriod":null,"pressure":1018.3,"current":null,"waterTemp":null,"airTemp":17},{"hour":23,"source":"noaa-gfs","wind":2.7,"dir":30,"gust":2.9,"wave":null,"wavePeriod":null,"pressure":1019.5,"current":null,"waterTemp":null,"airTemp":15.2},{"hour":23,"source":"open-meteo-marine","wind":null,"dir":null,"gust":null,"wave":0.2,"wavePeriod":2.6,"pressure":null,"current":null,"waterTemp":null,"airTemp":null},{"hour":23,"source":"open-meteo-wind","wind":4.1,"dir":262,"gust":11.7,"wave":null,"wavePeriod":null,"pressure":1018.3,"current":null,"waterTemp":null,"airTemp":16.4}]],"blockPerf":[{"day_offset":0,"time_block":"nacht","bsp_beam":5.37,"bsp_reach":5.37,"vmg_up":3.06,"vmg_up_twa":45,"vmg_down":3.21,"vmg_down_twa":160,"bsp_reach_twa":75,"wave_reduction":0.1,"wind_avg":8.2,"wave_avg":0.4},{"day_offset":0,"time_block":"morgen","bsp_beam":5.14,"bsp_reach":5.14,"vmg_up":2.93,"vmg_up_twa":45,"vmg_down":3,"vmg_down_twa":160,"bsp_reach_twa":75,"wave_reduction":0,"wind_avg":7.7,"wave_avg":0.1},{"day_offset":0,"time_block":"mittag","bsp_beam":4.97,"bsp_reach":4.97,"vmg_up":2.84,"vmg_up_twa":45,"vmg_down":2.87,"vmg_down_twa":160,"bsp_reach_twa":75,"wave_reduction":0,"wind_avg":7.4,"wave_avg":0.2},{"day_offset":0,"time_block":"abend","bsp_beam":5.97,"bsp_reach":5.97,"vmg_up":3.4,"vmg_up_twa":45,"vmg_down":3.84,"vmg_down_twa":160,"bsp_reach_twa":75,"wave_reduction":0.2,"wind_avg":9.7,"wave_avg":0.5},{"day_offset":1,"time_block":"nacht","bsp_beam":4.19,"bsp_reach":4.19,"vmg_up":2.42,"vmg_up_twa":45,"vmg_down":2.25,"vmg_down_twa":160,"bsp_reach_twa":75,"wave_reduction":0.1,"wind_avg":5.6,"wave_avg":0.4},{"day_offset":1,"time_block":"morgen","bsp_beam":4.2,"bsp_reach":4.2,"vmg_up":2.42,"vmg_up_twa":45,"vmg_down":2.25,"vmg_down_twa":160,"bsp_reach_twa":75,"wave_reduction":0,"wind_avg":5.4,"wave_avg":0.3},{"day_offset":1,"time_block":"mittag","bsp_beam":5.29,"bsp_reach":5.29,"vmg_up":3.01,"vmg_up_twa":45,"vmg_down":3.13,"vmg_down_twa":160,"bsp_reach_twa":75,"wave_reduction":0.1,"wind_avg":8,"wave_avg":0.4},{"day_offset":1,"time_block":"abend","bsp_beam":6.08,"bsp_reach":6.08,"vmg_up":3.46,"vmg_up_twa":45,"vmg_down":3.97,"vmg_down_twa":160,"bsp_reach_twa":75,"wave_reduction":0.3,"wind_avg":10,"wave_avg":0.6},{"day_offset":2,"time_block":"nacht","bsp_beam":4.2,"bsp_reach":4.2,"vmg_up":2.42,"vmg_up_twa":45,"vmg_down":2.25,"vmg_down_twa":160,"bsp_reach_twa":75,"wave_reduction":0,"wind_avg":2.8,"wave_avg":0.3},{"day_offset":2,"time_block":"morgen","bsp_beam":4.2,"bsp_reach":4.2,"vmg_up":2.42,"vmg_up_twa":45,"vmg_down":2.26,"vmg_down_twa":160,"bsp_reach_twa":75,"wave_reduction":0,"wind_avg":1.7,"wave_avg":0.2},{"day_offset":2,"time_block":"mittag","bsp_beam":4.2,"bsp_reach":4.2,"vmg_up":2.42,"vmg_up_twa":45,"vmg_down":2.26,"vmg_down_twa":160,"bsp_reach_twa":75,"wave_reduction":0,"wind_avg":5.2,"wave_avg":0.2},{"day_offset":2,"time_block":"abend","bsp_beam":4.2,"bsp_reach":4.2,"vmg_up":2.42,"vmg_up_twa":45,"vmg_down":2.25,"vmg_down_twa":160,"bsp_reach_twa":75,"wave_reduction":0,"wind_avg":5.6,"wave_avg":0.3}],"dayNames":[{"short":"Fr","label":"Heute"},{"short":"Sa","label":"Morgen"},{"short":"So","label":"Übermorgen"}],"dateStr":"Freitag, 1. Mai 2026","timeStr":"20:13","shortDate":"2026-05-01"};
+
+// ── Konstanten ──
+var COLORS={'open-meteo-wind':'#185FA5','noaa-gfs':'#3B6D11','stormglass':'#BA7517','open-meteo-marine':'#0F6E56'};
+var NAMES={'open-meteo-wind':'Open-Meteo','noaa-gfs':'GFS','stormglass':'Stormglass','open-meteo-marine':'Marine'};
+var CSS_CLS={'open-meteo-wind':'mn-om','noaa-gfs':'mn-gfs','stormglass':'mn-sg','open-meteo-marine':'mn-mar'};
+
+// Reihenfolge: Stormglass → Open-Meteo → GFS
+var WIND_SOURCES=['stormglass','open-meteo-wind','noaa-gfs'];
+var GUST_SOURCES=['open-meteo-wind','noaa-gfs']; // Stormglass liefert keine Böen
+var WAVE_SOURCES=['stormglass','open-meteo-marine'];
+
+var BLOCKS=[
+  {name:'Nacht',   range:'00:00\u201306:00', h0:0,  h1:5,  tb:'nacht'},
+  {name:'Morgen',  range:'06:00\u201312:00', h0:6,  h1:11, tb:'morgen'},
+  {name:'Mittag',  range:'12:00\u201318:00', h0:12, h1:17, tb:'mittag'},
+  {name:'Abend',   range:'18:00\u201324:00', h0:18, h1:23, tb:'abend'}
+];
+
+var vp={wind:1,gust:1,wave:1,pressure:0,current:0,airtemp:0};
+var cD=0;
+
+// ── Hilfsfunktionen ──
+var ARROWS=['\u2193','\u2199','\u2190','\u2196','\u2191','\u2197','\u2192','\u2198'];
+function wA(d){return d!=null?ARROWS[Math.round(d/45)%8]:''}
+
+function safeAvg(arr){
+  var f=arr.filter(function(v){return v!=null&&v>0});
+  return f.length?Math.round(f.reduce(function(a,b){return a+b},0)/f.length*10)/10:0;
+}
+function safeMax(arr){
+  var f=arr.filter(function(v){return v!=null&&v>0});
+  return f.length?Math.round(Math.max.apply(null,f)*10)/10:0;
+}
+
+// ── Sparkline: SVG (stretched) + HTML-Ticks (nicht gestreckt) ──
+function sparkSVG(vals,color,maxVal,h0){
+  if(!vals.length)return'';
+  var w=200, lineH=20, pad=2;
+  maxVal=maxVal||Math.max.apply(null,vals.concat(1));
+  var pts=vals.map(function(v,i){
+    var x=pad+(i/(vals.length-1||1))*(w-2*pad);
+    var y=lineH-pad-(v/maxVal)*(lineH-2*pad);
+    return Math.round(x*10)/10+','+Math.round(y*10)/10;
+  }).join(' ');
+
+  // SVG nur für die Linie (wird gestreckt via preserveAspectRatio=none)
+  var svg='<svg viewBox="0 0 '+w+' '+lineH+'" preserveAspectRatio="none" style="width:100%;height:20px;display:block">';
+  svg+='<polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>';
+  svg+='</svg>';
+
+  // HTML-Ticks darunter (nicht gestreckt, normaler DOM-Flow)
+  if(h0!=null){
+    svg+='<div style="display:flex;justify-content:space-between;padding:0 1px;margin-top:1px">';
+    for(var i=0;i<vals.length;i++){
+      svg+='<span style="font-size:7px;color:#aaa;font-family:monospace;line-height:1;text-align:center;min-width:0">'+(h0+i)+'</span>';
+    }
+    svg+='</div>';
+  }
+  return svg;
+}
+
+// ── Stündliche Werte für einen Block + Quellen + Feld holen ──
+function getHourly(dayIdx,h0,h1,sources,field){
+  var rows=D.hourlyFlat[dayIdx]||[];
+  var result={};
+  sources.forEach(function(s){result[s]=[];});
+  for(var h=h0;h<=h1;h++){
+    sources.forEach(function(s){
+      var found=rows.filter(function(r){return r.hour===h&&r.source===s});
+      var val=found.length?found[0][field]:null;
+      result[s].push(val!=null?val:0);
+    });
+  }
+  return result;
+}
+
+// ══════════════════════════════════════════════════════════════
+// Tabs erzeugen
+// ══════════════════════════════════════════════════════════════
+var tabsEl=document.getElementById('dt');
+D.dayNames.forEach(function(dn,i){
+  var t=document.createElement('div');
+  t.className='tab'+(i===0?' active':'');
+  t.textContent=dn.label+' ('+dn.short+')';
+  t.onclick=function(){switchDay(i)};
+  tabsEl.appendChild(t);
+});
+
+// ══════════════════════════════════════════════════════════════
+// Toggles erzeugen
+// ══════════════════════════════════════════════════════════════
+var tglEl=document.getElementById('toggles');
+[
+  {k:'wind',l:'Wind',on:1},
+  {k:'gust',l:'B\u00f6en',on:1},
+  {k:'wave',l:'Wellen',on:1},
+  {k:'pressure',l:'Druck',on:0},
+  {k:'current',l:'Str\u00f6mung/Wassertemp',on:0},
+  {k:'airtemp',  l:'Lufttemp.',   on:0}
+].forEach(function(p){
+  var b=document.createElement('div');
+  b.className='tgl'+(p.on?' on':'');
+  b.textContent=p.l;
+  b.onclick=function(){
+    vp[p.k]=vp[p.k]?0:1;
+    b.classList.toggle('on');
+    renderDay(cD);
+  };
+  tglEl.appendChild(b);
+});
+
+// ══════════════════════════════════════════════════════════════
+// Tag rendern
+// ══════════════════════════════════════════════════════════════
+function renderDay(dayIdx){
+  cD=dayIdx;
+  var html='';
+
+  BLOCKS.forEach(function(bl){
+    // ── Block-Zusammenfassung ──
+    var windData=getHourly(dayIdx,bl.h0,bl.h1,WIND_SOURCES,'wind');
+    var allWindVals=WIND_SOURCES.flatMap(function(s){return windData[s]});
+    var blockWindAvg=safeAvg(allWindVals);
+
+    var gustData=getHourly(dayIdx,bl.h0,bl.h1,WIND_SOURCES,'gust');
+    var allGustVals=WIND_SOURCES.flatMap(function(s){return gustData[s]});
+    var blockGustMax=safeMax(allGustVals);
+
+    var waveData=getHourly(dayIdx,bl.h0,bl.h1,WAVE_SOURCES,'wave');
+    var allWaveVals=WAVE_SOURCES.flatMap(function(s){return waveData[s]});
+    var blockWaveAvg=safeAvg(allWaveVals);
+
+    var dirData=getHourly(dayIdx,bl.h0,bl.h1,WIND_SOURCES,'dir');
+    var allDirVals=WIND_SOURCES.flatMap(function(s){return dirData[s]});
+    var blockDirAvg=safeAvg(allDirVals)!=null?Math.round(safeAvg(allDirVals)):null;
+
+    html+='<div class="bc">';
+    html+='<div class="bh"><h3>'+bl.name+' \u00b7 '+bl.range+'</h3>';
+    html+='<span class="sum">'+wA(blockDirAvg)+' '+blockWindAvg+' kt \u00b7 B\u00f6en '+blockGustMax+' \u00b7 '+blockWaveAvg+'m</span></div>';
+    html+='<div class="bb">';
+
+    // ════════════════════════════
+    // WIND
+    // ════════════════════════════
+    if(vp.wind){
+      var allMax=Math.max.apply(null,allWindVals.concat(1));
+      html+='<div class="pr"><div class="pl">Wind (kt)</div><div>';
+      WIND_SOURCES.forEach(function(src){
+        var vals=windData[src];
+        var dirs=dirData[src];
+        var a=safeAvg(vals);
+        var dA=safeAvg(dirs)!=null?Math.round(safeAvg(dirs)):null;
+        html+='<div class="mr">';
+        html+='<span class="mn '+CSS_CLS[src]+'">'+NAMES[src]+'</span>';
+        html+='<span class="mv">'+a+'</span>';
+        html+='<div class="sw">'+sparkSVG(vals,COLORS[src],allMax,bl.h0)+'</div>';
+        html+='<span class="md">'+wA(dA)+(dA?' '+dA+'\u00b0':'')+'</span>';
+        html+='</div>';
+      });
+      html+='</div>';
+
+      // Spread
+      var spreads=[];
+      for(var hh=bl.h0;hh<=bl.h1;hh++){
+        var hVals=WIND_SOURCES.map(function(s){return windData[s][hh-bl.h0]}).filter(function(v){return v>0});
+        if(hVals.length>=2) spreads.push(Math.max.apply(null,hVals)-Math.min.apply(null,hVals));
+      }
+      var spAvg=spreads.length?Math.round(spreads.reduce(function(a,b){return a+b},0)/spreads.length*10)/10:0;
+      var spPct=allMax>0?Math.min(100,Math.round(spAvg/allMax*300)):0;
+      html+='<div class="sb"><span class="sl">Spread</span><div class="st"><div class="sf" style="width:'+spPct+'%"></div></div><span class="sv">'+spAvg+' kt</span></div>';
+      html+='</div>';
+    }
+
+    // ════════════════════════════
+    // BÖEN
+    // ════════════════════════════
+    if(vp.gust){
+      var gustData2=getHourly(dayIdx,bl.h0,bl.h1,GUST_SOURCES,'gust');
+      var gAll=GUST_SOURCES.flatMap(function(s){return gustData2[s]});
+      var gMax=Math.max.apply(null,gAll.concat(1));
+      html+='<div class="pr"><div class="pl">B\u00f6en (kt)</div><div>';
+      GUST_SOURCES.forEach(function(src){
+        var vals=gustData2[src];
+        var mxVal=safeMax(vals);
+        html+='<div class="mr">';
+        html+='<span class="mn '+CSS_CLS[src]+'">'+NAMES[src]+'</span>';
+        html+='<span class="mv"'+(mxVal>20?' style="color:#A32D2D"':'')+'>'+mxVal+'</span>';
+        html+='<div class="sw">'+sparkSVG(vals,COLORS[src],gMax,bl.h0)+'</div>';
+        html+='<span class="md">max</span>';
+        html+='</div>';
+      });
+      html+='</div></div>';
+    }
+
+    // ════════════════════════════
+    // WELLEN & PERIODE
+    // ════════════════════════════
+    if(vp.wave){
+      html+='<div class="pr"><div class="pl">Wellen &amp; Periode</div><div>';
+      WAVE_SOURCES.forEach(function(src){
+        var wVals=getHourly(dayIdx,bl.h0,bl.h1,[src],'wave')[src];
+        var pVals=getHourly(dayIdx,bl.h0,bl.h1,[src],'wavePeriod')[src];
+        var wAvg=safeAvg(wVals);
+        var pAvg=safeAvg(pVals);
+        if(wAvg>0){
+          html+='<div class="mr"><span class="mn '+CSS_CLS[src]+'">'+NAMES[src]+' H</span>';
+          html+='<span class="mv">'+wAvg+'m</span>';
+          html+='<div class="sw">'+sparkSVG(wVals,COLORS[src],Math.max.apply(null,wVals.concat(.5)),bl.h0)+'</div>';
+          html+='<span class="md">\u2205</span></div>';
+        }
+        if(pAvg>0){
+          html+='<div class="mr"><span class="mn '+CSS_CLS[src]+'">'+NAMES[src]+' T</span>';
+          html+='<span class="mv">'+pAvg+'s</span>';
+          html+='<div class="sw">'+sparkSVG(pVals,COLORS[src],Math.max.apply(null,pVals.concat(5)),bl.h0)+'</div>';
+          html+='<span class="md">\u2205</span></div>';
+        }
+      });
+      html+='</div></div>';
+    }
+
+    // ════════════════════════════
+    // DRUCK
+    // ════════════════════════════
+    if(vp.pressure){
+      var pData=getHourly(dayIdx,bl.h0,bl.h1,WIND_SOURCES,'pressure');
+      var allP=WIND_SOURCES.flatMap(function(s){return pData[s]}).filter(function(v){return v>0});
+      if(allP.length){
+        var pMin=Math.min.apply(null,allP)-1;
+        var pMax=Math.max.apply(null,allP)+1;
+        html+='<div class="pr"><div class="pl">Druck (hPa)</div><div>';
+        WIND_SOURCES.forEach(function(src){
+          var vals=pData[src];
+          var a=safeAvg(vals);
+          if(a>0){
+            var normalized=vals.map(function(v){return v>0?(v-pMin)/(pMax-pMin)*18:0});
+            html+='<div class="mr"><span class="mn '+CSS_CLS[src]+'">'+NAMES[src]+'</span>';
+            html+='<span class="mv">'+a+'</span>';
+            html+='<div class="sw">'+sparkSVG(normalized,COLORS[src],18,bl.h0)+'</div>';
+            html+='<span class="md">\u2205</span></div>';
+          }
+        });
+        html+='</div></div>';
+      }
+    }
+
+    // ════════════════════════════
+    // STRÖMUNG & WASSERTEMP
+    // ════════════════════════════
+    if(vp.current){
+      var cData=getHourly(dayIdx,bl.h0,bl.h1,['stormglass'],'current');
+      var tData=getHourly(dayIdx,bl.h0,bl.h1,['stormglass'],'waterTemp');
+      var cVals=cData.stormglass||[];
+      var tVals=tData.stormglass||[];
+      var cAvg=safeAvg(cVals);
+      var tAvg=safeAvg(tVals);
+      if(cAvg>0||tAvg>0){
+        html+='<div class="pr"><div class="pl">Str\u00f6mung &amp; Wassertemp.</div><div>';
+        if(cAvg>0){
+          html+='<div class="mr"><span class="mn mn-sg">Str\u00f6mung</span><span class="mv">'+cAvg+' kt</span>';
+          html+='<div class="sw">'+sparkSVG(cVals,COLORS.stormglass,Math.max.apply(null,cVals.concat(.5)),bl.h0)+'</div>';
+          html+='<span class="md">\u2205</span></div>';
+        }
+        if(tAvg>0){
+          html+='<div class="mr"><span class="mn mn-sg">Wasser</span><span class="mv">'+tAvg+'\u00b0C</span>';
+          html+='<div class="sw">'+sparkSVG(tVals,COLORS.stormglass,Math.max.apply(null,tVals.concat(20)),bl.h0)+'</div>';
+          html+='<span class="md">\u2205</span></div>';
+        }
+        html+='</div></div>';
+      }
+    }
+
+    // ════════════════════════════
+    // LUFTTEMPERATUR
+    // ════════════════════════════
+    if(vp.airtemp){
+      var atData=getHourly(dayIdx,bl.h0,bl.h1,['open-meteo-wind'],'airTemp');
+      var atVals=atData['open-meteo-wind']||[];
+      var atAvg=safeAvg(atVals);
+      if(atAvg>0){
+        html+='<div class="pr"><div class="pl">Lufttemp. (°C)</div><div>';
+        html+='<div class="mr"><span class="mn mn-om">Open-Meteo</span>';
+        html+='<span class="mv">'+atAvg+'°</span>';
+        html+='<div class="sw">'+sparkSVG(atVals,COLORS['open-meteo-wind'],Math.max.apply(null,atVals.concat(30)),bl.h0)+'</div>';
+        html+='<span class="md">∅</span></div>';
+        html+='</div></div>';
+      }
+    }
+
+    // ════════════════════════════
+    // Dufour 44 PERFORMANCE
+    // ════════════════════════════
+    var perf=D.blockPerf.filter(function(p){
+      return p.day_offset===dayIdx && p.time_block===bl.tb;
+    })[0];
+
+    if(perf){
+      html+='<hr class="sep">';
+      html+='<div class="pl">Dufour 44 performance</div>';
+      html+='<div class="pg5">';
+      html+='<div class="pb"><div class="la">BSP beam</div><div class="va">'+(perf.bsp_beam!=null?perf.bsp_beam:'\u2014')+'<span class="un"> kt</span></div><div class="tw">TWA 90\u00b0</div></div>';
+      html+='<div class="pb"><div class="la">BSP reach</div><div class="va">'+(perf.bsp_reach!=null?perf.bsp_reach:'\u2014')+'<span class="un"> kt</span></div><div class="tw">TWA '+(perf.bsp_reach_twa||120)+'\u00b0</div></div>';
+      html+='<div class="pb"><div class="la">VMG up</div><div class="va">'+(perf.vmg_up!=null?perf.vmg_up:'\u2014')+'<span class="un"> kt</span></div><div class="tw">TWA '+(perf.vmg_up_twa||42)+'\u00b0</div></div>';
+      html+='<div class="pb"><div class="la">VMG down</div><div class="va">'+(perf.vmg_down!=null?perf.vmg_down:'\u2014')+'<span class="un"> kt</span></div><div class="tw">TWA '+(perf.vmg_down_twa||140)+'\u00b0</div></div>';
+      var wRed=perf.wave_reduction!=null?perf.wave_reduction:0;
+      html+='<div class="pb"><div class="la">Wellen \u2212</div><div class="va">\u2212'+wRed+'<span class="un">%</span></div><div class="tw">'+(perf.wave_avg!=null?perf.wave_avg:0)+'m</div></div>';
+      html+='</div>';
+    }
+
+    html+='</div></div>'; // close .bb + .bc
+  });
+
+  document.getElementById('blocks').innerHTML=html;
+}
+
+// ══════════════════════════════════════════════════════════════
+// Tag wechseln
+// ══════════════════════════════════════════════════════════════
+function switchDay(idx){
+  cD=idx;
+  document.querySelectorAll('.tab').forEach(function(t,j){
+    t.classList.toggle('active',j===idx);
+  });
+  renderDay(idx);
+}
+
+// Initial rendern
+renderDay(0);
+</script>
+</body>
+</html>
